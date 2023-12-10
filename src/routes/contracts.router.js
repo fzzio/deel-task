@@ -5,5 +5,6 @@ const contractsController = require('../controllers/contracts.controller');
 
 
 router.get('/:id', getProfile, contractsController.getContract);
+router.get('/', getProfile, contractsController.getContracts);
 
 module.exports = router;

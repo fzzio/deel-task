@@ -1,3 +1,6 @@
+const { Op } = require("sequelize");
+const { ContractTypes } = require('../utils/data.types');
+
 const getContract = async (req, res) => {
   const { Contract } = req.app.get('models');
   const { id } = req.params;
@@ -25,6 +28,36 @@ const getContract = async (req, res) => {
   }
 };
 
+const getContracts = async (req, res) => {
+  const { Contract } = req.app.get('models');
+  const { profile } = req;
+
+  try {
+    const contracts = await Contract.findAll({
+      where: {
+        [Op.and]: [
+          {
+            [Op.or]: [
+              { ClientId: profile.id },
+              { ContractorId: profile.id }
+            ]
+          },
+          {
+            status: { [Op.ne]: ContractTypes.TERMINATED }
+          }
+        ]
+      }
+    });
+
+    return res.json(contracts);
+  } catch (error) {
+    console.error('Error retrieving contract:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
 module.exports = {
-  getContract
+  getContract,
+  getContracts
 };
