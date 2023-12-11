@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const { ContractTypes, ProfileTypes } = require('../utils/data.types');
 
-const depositsMoney = async (req, res) => {
+const depositsMoney = async (req, res, next) => {
   const { Contract, Profile, Job } = req.app.get('models');
   const sequelize = req.app.get('sequelize');
   const { userId } = req.params;
@@ -72,7 +72,7 @@ const depositsMoney = async (req, res) => {
   } catch (error) {
     console.error('Error depositing money:', error);
     await t.rollback();
-    return res.status(500).json({ error: 'Internal Server Error' });
+    next(error);
   }
 };
 
