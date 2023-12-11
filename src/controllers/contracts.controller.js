@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const { ContractTypes, ProfileTypes } = require('../utils/data.types');
 
-const getContract = async (req, res) => {
+const getContract = async (req, res, next) => {
   const { Contract } = req.app.get('models');
   const { id } = req.params;
   const { profile } = req;
@@ -23,12 +23,11 @@ const getContract = async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized' });
     }
   } catch (error) {
-    console.error('Error retrieving contract:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    next(error);
   }
 };
 
-const getContracts = async (req, res) => {
+const getContracts = async (req, res, next) => {
   const { Contract } = req.app.get('models');
   const { profile } = req;
 
@@ -51,8 +50,7 @@ const getContracts = async (req, res) => {
 
     return res.json(contracts);
   } catch (error) {
-    console.error('Error retrieving contract:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    next(error);
   }
 };
 

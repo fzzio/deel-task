@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const { ProfileTypes } = require('../utils/data.types');
 
-const bestProfession = async (req, res) => {
+const bestProfession = async (req, res, next) => {
   const { Contract, Profile, Job } = req.app.get('models');
   const sequelize = req.app.get('sequelize');
   const { start, end } = req.query;
@@ -40,11 +40,11 @@ const bestProfession = async (req, res) => {
     }
   } catch (error) {
     console.error('Error finding best profession:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    next(error);
   }
 };
 
-const bestClients =  async (req, res) => {
+const bestClients =  async (req, res, next) => {
   const { Contract, Profile, Job } = req.app.get('models');
   const sequelize = req.app.get('sequelize');
   const { start, end, limit } = req.query;
@@ -93,7 +93,7 @@ const bestClients =  async (req, res) => {
     }
   } catch (error) {
     console.error('Error finding best clients:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    next(error);
   }
 };
 

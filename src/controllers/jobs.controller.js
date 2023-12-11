@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const { ContractTypes } = require('../utils/data.types');
 
-const getUnpaid = async (req, res) => {
+const getUnpaid = async (req, res, next) => {
   const { Contract, Job } = req.app.get('models');
   const { profile } = req;
 
@@ -31,11 +31,11 @@ const getUnpaid = async (req, res) => {
     return res.json(jobs);
   } catch (error) {
     console.error('Error retrieving unpaid jobs:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    next(error);
   }
 };
 
-const payForAJob = async (req, res) => {
+const payForAJob = async (req, res, next) => {
   const { Contract, Job, Profile } = req.app.get('models');
   const sequelize = req.app.get('sequelize');
 
@@ -61,7 +61,8 @@ const payForAJob = async (req, res) => {
       },
       where: {
         id: job_id
-      }
+      },
+      transaction: t,
     });
 
     if (!job) {
@@ -114,9 +115,8 @@ const payForAJob = async (req, res) => {
 
     return res.json({ message: 'Job paid successfully' });
   } catch (error) {
-    console.error('Error paying for a job:', error);
     await t.rollback();
-    return res.status(500).json({ error: 'Internal Server Error' });
+    next(error);
   }
 };
 
