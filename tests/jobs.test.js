@@ -1,5 +1,5 @@
 const supertest = require('supertest');
-const { Job, Contract, sequelize } = require('../src/model');
+const { Job, Profile, Contract, sequelize } = require('../src/model');
 const app = require('../src/app');
 
 describe('GET /jobs/unpaid', () => {
@@ -65,6 +65,32 @@ describe('GET /jobs/unpaid', () => {
     const response = await supertest(app)
       .get('/jobs/unpaid')
       .set('profile_id', '1');
+
+    expect(response.status).toBe(500);
+  });
+});
+
+
+
+describe('POST /jobs/:job_id/pay', () => {
+  it('should return 404 if job not found', async () => {
+    Job.findOne = jest.fn(() => null);
+
+    const response = await supertest(app)
+      .post('/jobs/999/pay')
+      .set('profile_id', '2');
+
+    expect(response.status).toBe(404);
+  });
+
+  it('should return 500 on server error', async () => {
+    Job.findOne = jest.fn(() => {
+      throw new Error('Mocked error');
+    });
+
+    const response = await supertest(app)
+      .post('/jobs/3/pay')
+      .set('profile_id', '2');
 
     expect(response.status).toBe(500);
   });
