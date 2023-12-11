@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { ContractTypes } = require('../utils/data.types');
+const { ContractTypes, ProfileTypes } = require('../utils/data.types');
 
 const getContract = async (req, res) => {
   const { Contract } = req.app.get('models');
@@ -13,8 +13,8 @@ const getContract = async (req, res) => {
       return res.status(404).json({ error: 'Contract not found' });
     }
 
-    const isClient = profile.type === 'client' && contract.ClientId === profile.id;
-    const isContractor = profile.type === 'contractor' && contract.ContractorId === profile.id;
+    const isClient = profile.type === ProfileTypes.CLIENT && contract.ClientId === profile.id;
+    const isContractor = profile.type === ProfileTypes.CONTRACTOR && contract.ContractorId === profile.id;
 
 
     if (isClient || isContractor) {

@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { ContractTypes } = require('../utils/data.types');
+const { ContractTypes, ProfileTypes } = require('../utils/data.types');
 
 const depositsMoney = async (req, res) => {
   const { Contract, Profile, Job } = req.app.get('models');
@@ -16,7 +16,7 @@ const depositsMoney = async (req, res) => {
 
   try {
     const senderClient = await Profile.findOne({
-      where: { id: profile.id, type: 'client' },
+      where: { id: profile.id, type: ProfileTypes.CLIENT },
       lock: t.LOCK.UPDATE,
       transaction: t,
     });
@@ -48,7 +48,7 @@ const depositsMoney = async (req, res) => {
     }
 
     const targetClient = await Profile.findOne({
-      where: { id: userId, type: 'client' },
+      where: { id: userId, type: ProfileTypes.CLIENT },
       lock: t.LOCK.UPDATE,
       transaction: t,
     });
